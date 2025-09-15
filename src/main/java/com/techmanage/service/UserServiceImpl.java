@@ -1,6 +1,8 @@
 package com.techmanage.service;
 
 import com.techmanage.entity.User;
+import com.techmanage.exception.EmailAlreadyExistsException;
+import com.techmanage.exception.UserNotFoundException;
 import com.techmanage.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(User user) {
         if (userRepository.findAll().stream().anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
-            throw new RuntimeException("Email já está em uso");
+            throw new EmailAlreadyExistsException("Email já está em uso");
         }
         return userRepository.save(user);
     }
@@ -29,7 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + id));
+                .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado com ID: " + id));
     }
 
     @Override
@@ -38,7 +40,7 @@ public class UserServiceImpl implements UserService {
 
         if (!existingUser.getEmail().equals(user.getEmail()) &&
             userRepository.findAll().stream().anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
-            throw new RuntimeException("Email já está em uso");
+            throw new EmailAlreadyExistsException("Email já está em uso");
         }
 
         existingUser.setFullName(user.getFullName());
