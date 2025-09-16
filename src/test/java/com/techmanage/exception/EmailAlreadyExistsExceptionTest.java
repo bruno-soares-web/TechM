@@ -102,7 +102,7 @@ class EmailAlreadyExistsExceptionTest {
     @Test
     void constructor_shouldHandleLongMessage() {
         // Given
-        String longMessage = "Email already exists: " + "test@".repeat(100) + "example.com";
+        String longMessage = "Email already exists: " + new String(new char[600]).replace('\0', 'X') + "@example.com"; // Simplified for Java 8
 
         // When
         EmailAlreadyExistsException exception = new EmailAlreadyExistsException(longMessage);

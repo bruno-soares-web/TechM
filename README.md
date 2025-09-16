@@ -72,13 +72,37 @@ cd TechManage
 ```
 
 ### 2. Execute a aplicação
+
+#### Opção A: Usando o script (Windows)
 ```bash
-mvn spring-boot:run
+run-app.bat
+```
+
+#### Opção B: Comando manual
+```bash
+# Configure JAVA_HOME para JDK (não JRE)
+set JAVA_HOME=C:\Program Files\Java\jdk1.8.0_202
+
+# Execute a aplicação
+mvn spring-boot:run -Dmaven.test.skip=true -Dmaven.compiler.fork=true -Dmaven.compiler.executable="C:\Program Files\Java\jdk1.8.0_202\bin\javac.exe"
 ```
 
 A aplicação estará disponível em: `http://localhost:8080`
 
-### 3. Acesse o Console H2 (opcional)
+### 3. Resolução de Problemas
+
+#### Erro: "No compiler is provided in this environment"
+**Causa**: Maven está usando JRE em vez de JDK
+**Solução**:
+1. Verifique se JDK está instalado: `dir "C:\Program Files\Java"`
+2. Configure JAVA_HOME: `set JAVA_HOME=C:\Program Files\Java\jdk1.8.0_202`
+3. Use os comandos com `-Dmaven.compiler.fork=true`
+
+#### Erro de compilação nos testes
+**Causa**: Incompatibilidade com Java 8 (uso de `var` ou `String.repeat()`)
+**Solução**: Execute com `-Dmaven.test.skip=true` ou atualize para JDK 11+
+
+### 4. Acesse o Console H2 (opcional)
 - URL: `http://localhost:8080/h2-console`
 - JDBC URL: `jdbc:h2:mem:techmanage`
 - Username: `sa`

@@ -6,6 +6,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import java.lang.reflect.Method;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,7 +49,7 @@ class TechManageApplicationTest {
             String[] args = {};
 
             // Verify the main method exists by reflection
-            var mainMethod = TechManageApplication.class.getDeclaredMethod("main", String[].class);
+            Method mainMethod = TechManageApplication.class.getDeclaredMethod("main", String[].class);
             assertNotNull(mainMethod, "Main method should exist");
             assertEquals("main", mainMethod.getName(), "Method should be named 'main'");
             assertTrue(java.lang.reflect.Modifier.isStatic(mainMethod.getModifiers()),
@@ -61,7 +63,7 @@ class TechManageApplicationTest {
     void main_shouldHandleNullArgs() {
         // Test main method with null args
         assertDoesNotThrow(() -> {
-            var mainMethod = TechManageApplication.class.getDeclaredMethod("main", String[].class);
+            Method mainMethod = TechManageApplication.class.getDeclaredMethod("main", String[].class);
             assertNotNull(mainMethod);
             // The method should handle null args gracefully (Spring Boot handles this)
         });
@@ -71,7 +73,7 @@ class TechManageApplicationTest {
     void main_shouldHandleVariousArgs() {
         // Test main method with various argument combinations
         assertDoesNotThrow(() -> {
-            var mainMethod = TechManageApplication.class.getDeclaredMethod("main", String[].class);
+            Method mainMethod = TechManageApplication.class.getDeclaredMethod("main", String[].class);
             assertNotNull(mainMethod);
 
             // Test with different argument patterns that Spring Boot might receive
@@ -123,7 +125,7 @@ class TechManageApplicationTest {
     @Test
     void springBootApplicationAnnotation_shouldHaveDefaultValues() {
         // Test the @SpringBootApplication annotation properties
-        var annotation = TechManageApplication.class.getAnnotation(org.springframework.boot.autoconfigure.SpringBootApplication.class);
+        SpringBootApplication annotation = TechManageApplication.class.getAnnotation(SpringBootApplication.class);
         assertNotNull(annotation, "@SpringBootApplication annotation should be present");
 
         // Test default values

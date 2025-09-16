@@ -102,7 +102,8 @@ class PhoneAlreadyExistsExceptionTest {
     @Test
     void constructor_shouldHandleLongMessage() {
         // Given
-        String longMessage = "Phone already exists: " + "+55 11 ".repeat(100) + "99999-9999";
+        String longMessage = "Phone already exists: " + new String(new char[100]).replace('\0', '+').replace('+', '+55 11 ') + "99999-9999";
+        longMessage = "Phone already exists: " + new String(new char[700]).replace('\0', 'X'); // Simplified for Java 8
 
         // When
         PhoneAlreadyExistsException exception = new PhoneAlreadyExistsException(longMessage);

@@ -261,7 +261,7 @@ class ErrorResponseTest {
     @Test
     void constructor_withLongMessage() {
         // Given
-        String longMessage = "A".repeat(1000); // 1000 character string
+        String longMessage = new String(new char[1000]).replace('\0', 'A'); // 1000 character string
         int status = 500;
 
         // When

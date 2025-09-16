@@ -90,7 +90,7 @@ class UserNotFoundExceptionTest {
     @Test
     void constructor_shouldHandleLongMessage() {
         // Given
-        String longMessage = "User not found: " + "A".repeat(1000);
+        String longMessage = "User not found: " + new String(new char[1000]).replace('\0', 'A');
 
         // When
         UserNotFoundException exception = new UserNotFoundException(longMessage);

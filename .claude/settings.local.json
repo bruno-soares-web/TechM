@@ -9,7 +9,11 @@
       "Bash(java:*)",
       "Bash(timeout 30 mvn clean compile -q)",
       "Bash(echo $JAVA_HOME)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(dir:*)",
+      "Bash(set JAVA_HOME=C:Program FilesJavajdk1.8.0_202)",
+      "Bash(timeout:*)",
+      "Bash(if exist nul del nul)"
     ],
     "deny": [],
     "ask": []
