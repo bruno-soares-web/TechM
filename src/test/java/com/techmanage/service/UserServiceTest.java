@@ -3,6 +3,7 @@ package com.techmanage.service;
 import com.techmanage.entity.User;
 import com.techmanage.entity.UserType;
 import com.techmanage.exception.EmailAlreadyExistsException;
+import com.techmanage.exception.PhoneAlreadyExistsException;
 import com.techmanage.exception.UserNotFoundException;
 import com.techmanage.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -115,6 +116,9 @@ class UserServiceTest {
         User result = userService.updateUser(1L, updatedData);
 
         assertNotNull(result);
+        assertEquals("João Santos", user.getFullName());
+        assertEquals("joao.santos@email.com", user.getEmail());
+        assertEquals(UserType.VIEWER, user.getUserType());
         verify(userRepository).save(user);
     }
 
@@ -148,5 +152,89 @@ class UserServiceTest {
         });
 
         verify(userRepository, never()).delete(any(User.class));
+    }
+
+    @Test
+    void updateUser_EmailAlreadyExistsForDifferentUser() {
+        User otherUser = new User("Pedro Silva", "pedro@email.com", "+5511777777777",
+                                 LocalDate.of(1988, 2, 10), UserType.EDITOR);
+        otherUser.setId(3L);
+
+        User updatedData = new User("João Santos", "pedro@email.com", "+5511999999999",
+                                   LocalDate.of(1990, 5, 15), UserType.VIEWER);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findAll()).thenReturn(Arrays.asList(user, otherUser));
+
+        assertThrows(EmailAlreadyExistsException.class, () -> {
+            userService.updateUser(1L, updatedData);
+        });
+
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void updateUser_SameEmailForSameUser() {
+        User updatedData = new User("João Santos", "joao@email.com", "+5511888888888",
+                                   LocalDate.of(1990, 5, 15), UserType.VIEWER);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findAll()).thenReturn(Arrays.asList(user));
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        User result = userService.updateUser(1L, updatedData);
+
+        assertNotNull(result);
+        assertEquals("+5511888888888", user.getPhone());
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void createUser_PhoneAlreadyExists() {
+        when(userRepository.findAll()).thenReturn(Arrays.asList(existingUser));
+
+        User newUser = new User("Outro Nome", "novo@email.com", "+5511888888888",
+                               LocalDate.of(1995, 3, 10), UserType.VIEWER);
+
+        assertThrows(PhoneAlreadyExistsException.class, () -> {
+            userService.createUser(newUser);
+        });
+
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void updateUser_PhoneAlreadyExistsForDifferentUser() {
+        User otherUser = new User("Pedro Silva", "pedro@email.com", "+5511777777777",
+                                 LocalDate.of(1988, 2, 10), UserType.EDITOR);
+        otherUser.setId(3L);
+
+        User updatedData = new User("João Santos", "joao.santos@email.com", "+5511777777777",
+                                   LocalDate.of(1990, 5, 15), UserType.VIEWER);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findAll()).thenReturn(Arrays.asList(user, otherUser));
+
+        assertThrows(PhoneAlreadyExistsException.class, () -> {
+            userService.updateUser(1L, updatedData);
+        });
+
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void updateUser_SamePhoneForSameUser() {
+        User updatedData = new User("João Santos", "joao.santos@email.com", "+5511999999999",
+                                   LocalDate.of(1990, 5, 15), UserType.VIEWER);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findAll()).thenReturn(Arrays.asList(user));
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        User result = userService.updateUser(1L, updatedData);
+
+        assertNotNull(result);
+        assertEquals("joao.santos@email.com", user.getEmail());
+        verify(userRepository).save(user);
     }
 }
