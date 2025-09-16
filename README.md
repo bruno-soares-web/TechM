@@ -8,8 +8,8 @@ O TechManage é uma aplicação backend que permite realizar operações CRUD (C
 
 ## 🚀 Tecnologias Utilizadas
 
-- **Java 17**
-- **Spring Boot 3.2.0**
+- **Java 8**
+- **Spring Boot 2.7.18**
 - **Spring Data JPA**
 - **Spring Validation**
 - **H2 Database** (em memória)
@@ -28,14 +28,25 @@ src/
 │   │   ├── repository/     # Camada de acesso aos dados
 │   │   ├── entity/         # Entidades JPA
 │   │   └── exception/      # Tratamento de exceções
+│   │       ├── GlobalExceptionHandler.java
+│   │       ├── UserNotFoundException.java
+│   │       ├── EmailAlreadyExistsException.java
+│   │       └── PhoneAlreadyExistsException.java
 │   └── resources/
 │       ├── application.properties
 │       ├── schema.sql      # Script de criação das tabelas
 │       └── data.sql        # Dados iniciais (opcional)
 └── test/
     └── java/com/techmanage/
+        ├── TechManageApplicationTest.java           # Testes da aplicação
+        ├── TechManageApplicationContextTest.java    # Testes de contexto
+        ├── TechManageApplicationIntegrationTest.java # Testes de integração da aplicação
         ├── service/        # Testes unitários
-        └── controller/     # Testes de integração
+        │   └── UserServiceTest.java
+        ├── controller/     # Testes de integração
+        │   ├── UserControllerIntegrationTest.java
+        │   └── ComprehensiveUserApiTest.java
+        └── exception/      # Testes de exceções
 ```
 
 ## 🏗️ Arquitetura
@@ -49,7 +60,7 @@ A aplicação segue o padrão de arquitetura em camadas:
 
 ## 📋 Pré-requisitos
 
-- Java 17 ou superior
+- Java 8 ou superior (JDK recomendado)
 - Maven 3.6+
 
 ## 🔧 Como Executar o Projeto
@@ -90,13 +101,13 @@ mvn test -Dtest="*IntegrationTest"
 
 ### Base URL: `http://localhost:8080/api/users`
 
-| Método | Endpoint | Descrição | Status |
-|--------|----------|-----------|--------|
-| POST   | `/api/users` | Criar novo usuário | 201 |
-| GET    | `/api/users` | Listar todos os usuários | 200 |
-| GET    | `/api/users/{id}` | Buscar usuário por ID | 200/404 |
-| PUT    | `/api/users/{id}` | Atualizar usuário | 200/404 |
-| DELETE | `/api/users/{id}` | Excluir usuário | 204/404 |
+| Método | Endpoint | Descrição | Status Sucesso | Status Erro |
+|--------|----------|-----------|----------------|-------------|
+| POST   | `/api/users` | Criar novo usuário | 201 Created | 400 Bad Request |
+| GET    | `/api/users` | Listar todos os usuários | 200 OK | - |
+| GET    | `/api/users/{id}` | Buscar usuário por ID | 200 OK | 404 Not Found |
+| PUT    | `/api/users/{id}` | Atualizar usuário | 200 OK | 400 Bad Request / 404 Not Found |
+| DELETE | `/api/users/{id}` | Excluir usuário | 204 No Content | 404 Not Found |
 
 ## 📝 Modelo de Dados
 
@@ -107,7 +118,7 @@ mvn test -Dtest="*IntegrationTest"
   "id": 1,
   "fullName": "João Silva",
   "email": "joao@email.com",
-  "phone": "+5511999999999",
+  "phone": "+55 11 99999-9999",
   "birthDate": "1990-05-15",
   "userType": "ADMIN"
 }
@@ -118,7 +129,7 @@ mvn test -Dtest="*IntegrationTest"
 - **id**: Gerado automaticamente
 - **fullName**: Nome completo (não pode estar vazio)
 - **email**: Email único e válido
-- **phone**: Telefone no formato internacional (ex: +55 11 99999-9999)
+- **phone**: Telefone único no formato internacional obrigatório (ex: +55 11 99999-9999)
 - **birthDate**: Data de nascimento (deve ser no passado)
 - **userType**: Tipo do usuário (ADMIN, EDITOR, VIEWER)
 
@@ -133,7 +144,7 @@ curl -X POST http://localhost:8080/api/users \
   -d '{
     "fullName": "João Silva",
     "email": "joao@email.com",
-    "phone": "+5511999999999",
+    "phone": "+55 11 99999-9999",
     "birthDate": "1990-05-15",
     "userType": "ADMIN"
   }'
@@ -145,7 +156,7 @@ curl -X POST http://localhost:8080/api/users \
   "id": 1,
   "fullName": "João Silva",
   "email": "joao@email.com",
-  "phone": "+5511999999999",
+  "phone": "+55 11 99999-9999",
   "birthDate": "1990-05-15",
   "userType": "ADMIN"
 }
@@ -165,7 +176,7 @@ curl -X GET http://localhost:8080/api/users
     "id": 1,
     "fullName": "João Silva",
     "email": "joao@email.com",
-    "phone": "+5511999999999",
+    "phone": "+55 11 99999-9999",
     "birthDate": "1990-05-15",
     "userType": "ADMIN"
   }
@@ -185,7 +196,7 @@ curl -X GET http://localhost:8080/api/users/1
   "id": 1,
   "fullName": "João Silva",
   "email": "joao@email.com",
-  "phone": "+5511999999999",
+  "phone": "+55 11 99999-9999",
   "birthDate": "1990-05-15",
   "userType": "ADMIN"
 }
@@ -194,9 +205,13 @@ curl -X GET http://localhost:8080/api/users/1
 **Usuário não encontrado (404 Not Found):**
 ```json
 {
-  "message": "Usuário não encontrado com ID: 999",
+  "fieldErrors": {
+    "id": "Usuário não encontrado com ID: 999"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
   "status": 404,
-  "timestamp": "2024-01-15T10:30:00"
+  "error": "Recurso não encontrado",
+  "path": "/api/users/999"
 }
 ```
 
@@ -209,7 +224,7 @@ curl -X PUT http://localhost:8080/api/users/1 \
   -d '{
     "fullName": "João Santos",
     "email": "joao.santos@email.com",
-    "phone": "+5511888888888",
+    "phone": "+55 11 88888-8888",
     "birthDate": "1990-05-15",
     "userType": "EDITOR"
   }'
@@ -221,7 +236,7 @@ curl -X PUT http://localhost:8080/api/users/1 \
   "id": 1,
   "fullName": "João Santos",
   "email": "joao.santos@email.com",
-  "phone": "+5511888888888",
+  "phone": "+55 11 88888-8888",
   "birthDate": "1990-05-15",
   "userType": "EDITOR"
 }
@@ -238,35 +253,400 @@ curl -X DELETE http://localhost:8080/api/users/1
 
 ## ⚠️ Tratamento de Erros
 
-A API retorna códigos HTTP apropriados e mensagens de erro claras:
+A API retorna códigos HTTP apropriados e mensagens de erro claras em inglês, seguindo um padrão consistente:
 
 ### Códigos de Status
 
-- **200 OK**: Operação realizada com sucesso
+#### Sucesso
+- **200 OK**: Operação de consulta ou atualização realizada com sucesso
 - **201 Created**: Usuário criado com sucesso
 - **204 No Content**: Usuário excluído com sucesso
-- **400 Bad Request**: Dados inválidos ou malformados
-- **404 Not Found**: Usuário não encontrado
-- **409 Conflict**: Email já está em uso
+
+#### Erro
+- **400 Bad Request**: Dados inválidos, malformados ou duplicados
+- **404 Not Found**: Recurso não encontrado
 - **500 Internal Server Error**: Erro interno do servidor
 
-### Exemplo de Erro de Validação (400)
+### Formato Padrão de Erro
+
+Todos os erros seguem o mesmo formato com `fieldErrors`, `timestamp` e `path`:
 
 ```json
 {
-  "message": "fullName: Nome completo é obrigatório, email: Email deve ter formato válido",
+  "fieldErrors": {
+    "campo": "Mensagem específica do erro"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
   "status": 400,
-  "timestamp": "2024-01-15T10:30:00"
+  "error": "Erro de validação",
+  "path": "/api/users"
+}
+```
+
+### Cenários de Erro Completos
+
+#### 1. Validação de Campos Obrigatórios (400 Bad Request)
+
+```json
+{
+  "fieldErrors": {
+    "fullName": "Nome completo é obrigatório",
+    "email": "Email deve ter um formato válido",
+    "phone": "Telefone deve estar no formato internacional (ex: +55 11 99999-9999)",
+    "birthDate": "Data de nascimento deve estar no passado",
+    "userType": "Tipo de usuário é obrigatório"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
+  "status": 400,
+  "error": "Erro de validação",
+  "path": "/api/users"
+}
+```
+
+#### 2. Email Já Existe (400 Bad Request)
+
+```json
+{
+  "fieldErrors": {
+    "email": "Email já está em uso"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
+  "status": 400,
+  "error": "Erro de validação",
+  "path": "/api/users"
+}
+```
+
+#### 3. Telefone Já Existe (400 Bad Request)
+
+```json
+{
+  "fieldErrors": {
+    "phone": "Telefone já está em uso"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
+  "status": 400,
+  "error": "Erro de validação",
+  "path": "/api/users"
+}
+```
+
+#### 4. Tipo de Usuário Inválido (400 Bad Request)
+
+```json
+{
+  "fieldErrors": {
+    "userType": "Tipo de usuário inválido. Valores aceitos: ADMIN, EDITOR, VIEWER"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
+  "status": 400,
+  "error": "Erro de validação",
+  "path": "/api/users"
+}
+```
+
+#### 5. Usuário Não Encontrado (404 Not Found)
+
+```json
+{
+  "fieldErrors": {
+    "id": "Usuário não encontrado com ID: 999"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
+  "status": 404,
+  "error": "Recurso não encontrado",
+  "path": "/api/users/999"
+}
+```
+
+#### 6. JSON Malformado (400 Bad Request)
+
+```json
+{
+  "fieldErrors": {
+    "request": "Formato JSON inválido"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
+  "status": 400,
+  "error": "Erro de validação",
+  "path": "/api/users"
 }
 ```
 
 ## 🧪 Validações Implementadas
 
-- **fullName**: Não pode estar vazio
-- **email**: Deve ter formato válido e ser único
-- **phone**: Deve seguir padrão internacional (+XX XXXXXXXXX)
-- **birthDate**: Deve ser uma data no passado
-- **userType**: Deve ser ADMIN, EDITOR ou VIEWER
+### Campos Obrigatórios e Regras
+
+| Campo | Validação | Mensagem de Erro (Português) |
+|-------|-----------|---------------------------|
+| **fullName** | Não pode estar vazio | "Nome completo é obrigatório" |
+| **email** | Formato válido e único | "Email deve ter um formato válido" / "Email já está em uso" |
+| **phone** | Formato internacional obrigatório e único: +XX XX XXXXX-XXXX | "Telefone deve estar no formato internacional (ex: +55 11 99999-9999)" / "Telefone já está em uso" |
+| **birthDate** | Deve ser uma data no passado | "Data de nascimento deve estar no passado" |
+| **userType** | Deve ser ADMIN, EDITOR ou VIEWER | "Tipo de usuário é obrigatório" / "Tipo de usuário inválido. Valores aceitos: ADMIN, EDITOR, VIEWER" |
+| **id** | Deve existir para operações de busca/atualização/exclusão | "Usuário não encontrado com ID: {id}" |
+
+### Regras de Formatação
+
+#### Telefone
+- **Formato obrigatório**: `+XX XX XXXXX-XXXX`
+- **Exemplo válido**: `+55 11 99999-9999`
+- Código do país obrigatório
+- Espaços obrigatórios entre código do país e área
+- Hífen obrigatório antes dos últimos 4 dígitos
+
+#### UserType
+- **Valores aceitos**: `ADMIN`, `EDITOR`, `VIEWER`
+- Sensível a maiúsculas/minúsculas
+- Qualquer outro valor retorna erro de validação
+
+#### JSON Response Order
+Os campos no JSON de resposta sempre aparecem na ordem:
+1. `id`
+2. `fullName`
+3. `email`
+4. `phone` (sempre formatado como +XX XX XXXXX-XXXX)
+5. `birthDate`
+6. `userType`
+
+### Tratamento de Erros por Campo
+Os erros de validação sempre retornam todos os campos inválidos de uma vez, organizados na ordem: `fullName`, `email`, `phone`, `birthDate`, `userType`.
+
+## 📋 Exemplos Completos de Cenários
+
+### Cenários de Sucesso
+
+#### ✅ Criar usuário válido
+```bash
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "Maria Silva",
+    "email": "maria@email.com",
+    "phone": "+55 11 88888-8888",
+    "birthDate": "1985-03-20",
+    "userType": "EDITOR"
+  }'
+```
+
+**Resposta (201 Created):**
+```json
+{
+  "id": 2,
+  "fullName": "Maria Silva",
+  "email": "maria@email.com",
+  "phone": "+55 11 88888-8888",
+  "birthDate": "1985-03-20",
+  "userType": "EDITOR"
+}
+```
+
+#### ✅ Listar usuários (lista vazia)
+```bash
+curl -X GET http://localhost:8080/api/users
+```
+
+**Resposta (200 OK):**
+```json
+[]
+```
+
+#### ✅ Atualizar usuário existente
+```bash
+curl -X PUT http://localhost:8080/api/users/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "João Santos Updated",
+    "email": "joao.updated@email.com",
+    "phone": "+55 11 77777-7777",
+    "birthDate": "1990-05-15",
+    "userType": "VIEWER"
+  }'
+```
+
+**Resposta (200 OK):**
+```json
+{
+  "id": 1,
+  "fullName": "João Santos Updated",
+  "email": "joao.updated@email.com",
+  "phone": "+55 11 77777-7777",
+  "birthDate": "1990-05-15",
+  "userType": "VIEWER"
+}
+```
+
+### Cenários de Erro
+
+#### ❌ Dados inválidos em múltiplos campos
+```bash
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "",
+    "email": "email-invalido",
+    "phone": "telefone-invalido",
+    "birthDate": "2030-01-01",
+    "userType": null
+  }'
+```
+
+**Resposta (400 Bad Request):**
+```json
+{
+  "fieldErrors": {
+    "fullName": "Nome completo é obrigatório",
+    "email": "Email deve ter um formato válido",
+    "phone": "Telefone deve estar no formato internacional (ex: +55 11 99999-9999)",
+    "birthDate": "Data de nascimento deve estar no passado",
+    "userType": "Tipo de usuário é obrigatório"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
+  "status": 400,
+  "error": "Erro de validação",
+  "path": "/api/users"
+}
+```
+
+#### ❌ Email duplicado
+```bash
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "Outro Usuario",
+    "email": "maria@email.com",
+    "phone": "+55 11 99999-9999",
+    "birthDate": "1990-01-01",
+    "userType": "ADMIN"
+  }'
+```
+
+**Resposta (400 Bad Request):**
+```json
+{
+  "fieldErrors": {
+    "email": "Email já está em uso"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
+  "status": 400,
+  "error": "Erro de validação",
+  "path": "/api/users"
+}
+```
+
+#### ❌ Telefone duplicado
+```bash
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "Novo Usuario",
+    "email": "novo@email.com",
+    "phone": "+55 11 88888-8888",
+    "birthDate": "1992-06-15",
+    "userType": "VIEWER"
+  }'
+```
+
+**Resposta (400 Bad Request):**
+```json
+{
+  "fieldErrors": {
+    "phone": "Telefone já está em uso"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
+  "status": 400,
+  "error": "Erro de validação",
+  "path": "/api/users"
+}
+```
+
+#### ❌ Tipo de usuário inválido
+```bash
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "Test User",
+    "email": "test@email.com",
+    "phone": "+55 11 66666-6666",
+    "birthDate": "1995-12-25",
+    "userType": "INVALID_TYPE"
+  }'
+```
+
+**Resposta (400 Bad Request):**
+```json
+{
+  "fieldErrors": {
+    "userType": "Tipo de usuário inválido. Valores aceitos: ADMIN, EDITOR, VIEWER"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
+  "status": 400,
+  "error": "Erro de validação",
+  "path": "/api/users"
+}
+```
+
+#### ❌ Buscar usuário inexistente
+```bash
+curl -X GET http://localhost:8080/api/users/999
+```
+
+**Resposta (404 Not Found):**
+```json
+{
+  "fieldErrors": {
+    "id": "Usuário não encontrado com ID: 999"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
+  "status": 404,
+  "error": "Recurso não encontrado",
+  "path": "/api/users/999"
+}
+```
+
+#### ❌ Atualizar usuário inexistente
+```bash
+curl -X PUT http://localhost:8080/api/users/999 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "Test Update",
+    "email": "update@email.com",
+    "phone": "+55 11 55555-5555",
+    "birthDate": "1988-07-10",
+    "userType": "ADMIN"
+  }'
+```
+
+**Resposta (404 Not Found):**
+```json
+{
+  "fieldErrors": {
+    "id": "Usuário não encontrado com ID: 999"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
+  "status": 404,
+  "error": "Recurso não encontrado",
+  "path": "/api/users/999"
+}
+```
+
+#### ❌ Excluir usuário inexistente
+```bash
+curl -X DELETE http://localhost:8080/api/users/999
+```
+
+**Resposta (404 Not Found):**
+```json
+{
+  "fieldErrors": {
+    "id": "Usuário não encontrado com ID: 999"
+  },
+  "timestamp": "2024-01-15T10:30:45.123",
+  "status": 404,
+  "error": "Recurso não encontrado",
+  "path": "/api/users/999"
+}
+```
 
 ## 📊 Dados de Teste
 
@@ -274,14 +654,17 @@ A aplicação vem com alguns usuários pré-cadastrados para facilitar os testes
 
 1. **Admin do Sistema**
    - Email: admin@techmanage.com
+   - Phone: +55 11 99999-9999
    - Tipo: ADMIN
 
 2. **Editor Principal**
    - Email: editor@techmanage.com
+   - Phone: +55 11 88888-8888
    - Tipo: EDITOR
 
 3. **Visualizador Teste**
    - Email: viewer@techmanage.com
+   - Phone: +55 11 77777-7777
    - Tipo: VIEWER
 
 ## 🚀 Build e Empacotamento
