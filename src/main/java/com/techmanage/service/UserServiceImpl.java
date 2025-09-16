@@ -1,13 +1,15 @@
 package com.techmanage.service;
 
-import com.techmanage.entity.User;
-import com.techmanage.exception.EmailAlreadyExistsException;
-import com.techmanage.exception.UserNotFoundException;
-import com.techmanage.repository.UserRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.techmanage.entity.User;
+import com.techmanage.exception.EmailAlreadyExistsException;
+import com.techmanage.exception.PhoneAlreadyExistsException;
+import com.techmanage.exception.UserNotFoundException;
+import com.techmanage.repository.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,6 +21,9 @@ public class UserServiceImpl implements UserService {
     public User createUser(User user) {
         if (userRepository.findAll().stream().anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
             throw new EmailAlreadyExistsException("Email já está em uso");
+        }
+        if (userRepository.findAll().stream().anyMatch(u -> u.getPhone().equals(user.getPhone()))) {
+            throw new PhoneAlreadyExistsException("Telefone já está em uso");
         }
         return userRepository.save(user);
     }
@@ -41,6 +46,11 @@ public class UserServiceImpl implements UserService {
         if (!existingUser.getEmail().equals(user.getEmail()) &&
             userRepository.findAll().stream().anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
             throw new EmailAlreadyExistsException("Email já está em uso");
+        }
+
+        if (!existingUser.getPhone().equals(user.getPhone()) &&
+            userRepository.findAll().stream().anyMatch(u -> u.getPhone().equals(user.getPhone()))) {
+            throw new PhoneAlreadyExistsException("Telefone já está em uso");
         }
 
         existingUser.setFullName(user.getFullName());

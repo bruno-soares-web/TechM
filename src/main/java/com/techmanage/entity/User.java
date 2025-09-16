@@ -1,11 +1,14 @@
 package com.techmanage.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
+@JsonPropertyOrder({"id", "fullName", "email", "phone", "birthDate", "userType"})
 public class User {
 
     @Id
@@ -16,17 +19,17 @@ public class User {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @Email(message = "Email deve ter formato válido")
+    @Email(message = "Email deve ter um formato válido")
     @NotBlank(message = "Email é obrigatório")
     @Column(unique = true, nullable = false)
     private String email;
 
     @NotBlank(message = "Telefone é obrigatório")
-    @Pattern(regexp = "^\\+[1-9]\\d{1,14}$", message = "Telefone deve estar no formato internacional (ex: +55 11 99999-9999)")
+    @Pattern(regexp = "^\\+\\d{1,3}\\s\\d{2}\\s\\d{4,5}-\\d{4}$", message = "Telefone deve estar no formato internacional (ex: +55 11 99999-9999)")
     @Column(nullable = false)
     private String phone;
 
-    @Past(message = "Data de nascimento deve ser no passado")
+    @Past(message = "Data de nascimento deve estar no passado")
     @NotNull(message = "Data de nascimento é obrigatória")
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
@@ -71,7 +74,19 @@ public class User {
         this.email = email;
     }
 
+    @JsonGetter("phone")
     public String getPhone() {
+        if (phone != null && phone.matches("^\\+\\d{1,3}\\d{2}\\d{4,5}\\d{4}$")) {
+            // Se o telefone está sem formatação, aplicar formato +XX XX XXXXX-XXXX
+            String digits = phone.substring(1); // Remove o +
+            if (digits.length() >= 10) {
+                String countryCode = digits.substring(0, 2);
+                String areaCode = digits.substring(2, 4);
+                String firstPart = digits.substring(4, digits.length() - 4);
+                String lastPart = digits.substring(digits.length() - 4);
+                return "+" + countryCode + " " + areaCode + " " + firstPart + "-" + lastPart;
+            }
+        }
         return phone;
     }
 
