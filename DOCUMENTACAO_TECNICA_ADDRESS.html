@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação Técnica - Campo Address</title>
+    <style>
+        body {
+            font-family: 'Calibri', 'Arial', sans-serif;
+            line-height: 1.6;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20mm;
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 28pt;
+            margin-top: 0;
+        }
+
+        h2 {
+            color: #2980b9;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            font-size: 20pt;
+        }
+
+        h3 {
+            color: #16a085;
+            margin-top: 25px;
+            font-size: 16pt;
+        }
+
+        h4 {
+            color: #27ae60;
+            margin-top: 20px;
+            font-size: 14pt;
+        }
+
+        .header-info {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-left: 5px solid #3498db;
+            margin-bottom: 30px;
+        }
+
+        .summary-box {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-left: 5px solid #4caf50;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background-color: #fff3e0;
+            padding: 15px;
+            border-left: 5px solid #ff9800;
+            margin: 15px 0;
+        }
+
+        .danger-box {
+            background-color: #ffebee;
+            padding: 15px;
+            border-left: 5px solid #f44336;
+            margin: 15px 0;
+        }
+
+        .info-box {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-left: 5px solid #2196f3;
+            margin: 15px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        table th {
+            background-color: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 10pt;
+            color: #c7254e;
+        }
+
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 10pt;
+            line-height: 1.4;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: #ecf0f1;
+            padding: 0;
+        }
+
+        ul {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .checklist {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #f9f9f9;
+            border-left: 3px solid #3498db;
+        }
+
+        .checklist li:before {
+            content: "☐ ";
+            color: #3498db;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 9pt;
+            font-weight: bold;
+            margin: 0 3px;
+        }
+
+        .badge-high {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .badge-medium {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        .badge-low {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .badge-none {
+            background-color: #9e9e9e;
+            color: white;
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
+
+        @media print {
+            body {
+                padding: 10mm;
+            }
+
+            .page-break {
+                page-break-after: always;
+            }
+        }
+
+        .file-path {
+            background-color: #263238;
+            color: #aed581;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 10pt;
+            display: inline-block;
+            margin: 5px 0;
+        }
+
+        .diff-add {
+            background-color: #c8e6c9;
+            padding: 2px 4px;
+            display: block;
+            margin: 2px 0;
+        }
+
+        .diff-remove {
+            background-color: #ffcdd2;
+            padding: 2px 4px;
+            display: block;
+            margin: 2px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📄 DOCUMENTAÇÃO TÉCNICA</h1>
+<h2>Adição do Campo <code>address</code> (String) na Entidade User</h2>
+
+<div class="header-info">
+    <p><strong>Projeto:</strong> TechManage</p>
+    <p><strong>Data:</strong> 2025-10-07</p>
+    <p><strong>Versão:</strong> 1.0</p>
+    <p><strong>Autor:</strong> Equipe de Desenvolvimento</p>
+</div>
+
+<h2>📋 RESUMO EXECUTIVO</h2>
+
+<div class="summary-box">
+    <p><strong>Objetivo:</strong> Adicionar o campo <code>address</code> do tipo String na entidade User</p>
+    <p><strong>Impacto:</strong> 9 classes (5 produção + 4 testes)</p>
+    <p><strong>Complexidade:</strong> Média</p>
+    <p><strong>Estimativa de Desenvolvimento:</strong> 2-3 horas</p>
+    <p><strong>Estimativa de Testes:</strong> 1-2 horas</p>
+    <p><strong>Total Estimado:</strong> 3-5 horas</p>
+</div>
+
+<h2>🎯 CLASSES IMPACTADAS</h2>
+
+<h3>PRODUÇÃO (5 classes)</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Classe</th>
+            <th>Caminho</th>
+            <th>Tipo</th>
+            <th>Impacto</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td><strong>User.java</strong></td>
+            <td><code>src\main\java\com\techmanage\entity\User.java</code></td>
+            <td>Entidade JPA</td>
+            <td><span class="badge badge-high">ALTO</span></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td><strong>UserServiceImpl.java</strong></td>
+            <td><code>src\main\java\com\techmanage\service\UserServiceImpl.java</code></td>
+            <td>Service Layer</td>
+            <td><span class="badge badge-medium">MÉDIO</span></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td><strong>UserController.java</strong></td>
+            <td><code>src\main\java\com\techmanage\controller\UserController.java</code></td>
+            <td>REST Controller</td>
+            <td><span class="badge badge-none">NENHUM</span></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td><strong>UserRepository.java</strong></td>
+            <td><code>src\main\java\com\techmanage\repository\UserRepository.java</code></td>
+            <td>JPA Repository</td>
+            <td><span class="badge badge-none">NENHUM</span></td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td><strong>UserService.java</strong></td>
+            <td><code>src\main\java\com\techmanage\service\UserService.java</code></td>
+            <td>Interface</td>
+            <td><span class="badge badge-none">NENHUM</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>TESTES (4 classes)</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Classe</th>
+            <th>Caminho</th>
+            <th>Tipo</th>
+            <th>Impacto</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>6</td>
+            <td><strong>UserTest.java</strong></td>
+            <td><code>src\test\java\com\techmanage\entity\UserTest.java</code></td>
+            <td>Teste Unitário</td>
+            <td><span class="badge badge-high">ALTO</span></td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td><strong>UserServiceTest.java</strong></td>
+            <td><code>src\test\java\com\techmanage\service\UserServiceTest.java</code></td>
+            <td>Teste Unitário com Mocks</td>
+            <td><span class="badge badge-medium">MÉDIO</span></td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td><strong>UserControllerIntegrationTest.java</strong></td>
+            <td><code>src\test\java\com\techmanage\controller\UserControllerIntegrationTest.java</code></td>
+            <td>Teste de Integração</td>
+            <td><span class="badge badge-medium">MÉDIO</span></td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td><strong>UserRepositoryTest.java</strong></td>
+            <td><code>src\test\java\com\techmanage\repository\UserRepositoryTest.java</code></td>
+            <td>Teste de Repositório</td>
+            <td><span class="badge badge-low">BAIXO</span></td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td><strong>UserControllerUnitTest.java</strong></td>
+            <td><code>src\test\java\com\techmanage\controller\UserControllerUnitTest.java</code></td>
+            <td>Teste Unitário</td>
+            <td><span class="badge badge-medium">MÉDIO</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2>🔧 ALTERAÇÕES DETALHADAS POR CLASSE</h2>
+
+<h3>1. User.java - Entidade Principal</h3>
+<p class="file-path">src\main\java\com\techmanage\entity\User.java</p>
+
+<h4>📍 Alteração 1: Linha 11 - Atualizar @JsonPropertyOrder</h4>
+<div class="info-box">
+    <p><strong>Descrição:</strong> Adicionar campo <code>address</code> na ordem de serialização JSON</p>
+</div>
+
+<pre><code>// ❌ ANTES (linha 11):
+@JsonPropertyOrder({"id", "fullName", "email", "phone", "birthDate", "userType"})
+
+// ✅ DEPOIS:
+@JsonPropertyOrder({"id", "fullName", "email", "phone", "birthDate", "userType", "address"})</code></pre>
+
+<p><strong>Motivo:</strong> Garantir que o campo <code>address</code> apareça na ordem correta no JSON de resposta da API.</p>
+
+<hr>
+
+<h4>📍 Alteração 2: Após linha 40 - Adicionar campo address</h4>
+<div class="info-box">
+    <p><strong>Descrição:</strong> Declarar novo atributo privado com anotação JPA</p>
+</div>
+
+<pre><code>// ✅ ADICIONAR APÓS linha 40:
+    @Column(name = "address")
+    private String address;</code></pre>
+
+<div class="warning-box">
+    <p><strong>Observações:</strong></p>
+    <ul>
+        <li>Campo é <strong>nullable</strong> (permite valores null)</li>
+        <li>Não há validações (@NotBlank, @Size, etc.) - adicionar se necessário</li>
+        <li>Nome da coluna no banco será "address"</li>
+    </ul>
+</div>
+
+<hr>
+
+<h4>📍 Alteração 3: Linha 45 - Atualizar construtor parametrizado</h4>
+<div class="info-box">
+    <p><strong>Descrição:</strong> Incluir parâmetro <code>address</code> no construtor</p>
+</div>
+
+<pre><code>// ❌ ANTES (linha 45):
+public User(String fullName, String email, String phone, LocalDate birthDate, UserType userType) {
+    this.fullName = fullName;
+    this.email = email;
+    this.phone = phone;
+    this.birthDate = birthDate;
+    this.userType = userType;
+}
+
+// ✅ DEPOIS:
+public User(String fullName, String email, String phone, LocalDate birthDate, UserType userType, String address) {
+    this.fullName = fullName;
+    this.email = email;
+    this.phone = phone;
+    this.birthDate = birthDate;
+    this.userType = userType;
+    this.address = address;
+}</code></pre>
+
+<div class="danger-box">
+    <p><strong>⚠️ ATENÇÃO:</strong> Esta alteração irá quebrar TODOS os testes que usam este construtor!</p>
+</div>
+
+<hr>
+
+<h4>📍 Alteração 4: Após linha 111 - Adicionar getter e setter</h4>
+
+<pre><code>// ✅ ADICIONAR APÓS linha 111:
+public String getAddress() {
+    return address;
+}
+
+public void setAddress(String address) {
+    this.address = address;
+}</code></pre>
+
+<hr>
+
+<h4>📍 Alteração 5: Linhas 114-123 - Atualizar método toString()</h4>
+
+<pre><code>// ❌ ANTES (linhas 114-123):
+@Override
+public String toString() {
+    return "User{" +
+            "id=" + id +
+            ", fullName='" + fullName + '\'' +
+            ", email='" + email + '\'' +
+            ", phone='" + phone + '\'' +
+            ", birthDate=" + birthDate +
+            ", userType=" + userType +
+            '}';
+}
+
+// ✅ DEPOIS:
+@Override
+public String toString() {
+    return "User{" +
+            "id=" + id +
+            ", fullName='" + fullName + '\'' +
+            ", email='" + email + '\'' +
+            ", phone='" + phone + '\'' +
+            ", birthDate=" + birthDate +
+            ", userType=" + userType +
+            ", address='" + address + '\'' +
+            '}';
+}</code></pre>
+
+<div class="page-break"></div>
+
+<h3>2. UserServiceImpl.java - Lógica de Negócio</h3>
+<p class="file-path">src\main\java\com\techmanage\service\UserServiceImpl.java</p>
+
+<h4>📍 Alteração 1: Linha 60 - Adicionar set de address no método updateUser</h4>
+
+<pre><code>// ❌ ANTES:
+existingUser.setFullName(user.getFullName());
+existingUser.setEmail(user.getEmail());
+existingUser.setPhone(user.getPhone());
+existingUser.setBirthDate(user.getBirthDate());
+existingUser.setUserType(user.getUserType());
+
+return userRepository.save(existingUser);
+
+// ✅ DEPOIS:
+existingUser.setFullName(user.getFullName());
+existingUser.setEmail(user.getEmail());
+existingUser.setPhone(user.getPhone());
+existingUser.setBirthDate(user.getBirthDate());
+existingUser.setUserType(user.getUserType());
+existingUser.setAddress(user.getAddress());  // ⬅️ NOVA LINHA
+
+return userRepository.save(existingUser);</code></pre>
+
+<div class="danger-box">
+    <p><strong>Impacto:</strong> Sem esta linha, o campo address nunca seria atualizado em operações de update.</p>
+</div>
+
+<div class="page-break"></div>
+
+<h3>3. UserTest.java - Testes da Entidade</h3>
+<p class="file-path">src\test\java\com\techmanage\entity\UserTest.java</p>
+
+<h4>Resumo das Alterações</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>Linha</th>
+            <th>Tipo de Alteração</th>
+            <th>Descrição</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>27</td>
+            <td>Adicionar assert</td>
+            <td><code>assertNull(newUser.getAddress());</code></td>
+        </tr>
+        <tr>
+            <td>33</td>
+            <td>Atualizar construtor</td>
+            <td>Adicionar parâmetro "Rua Teste, 123"</td>
+        </tr>
+        <tr>
+            <td>40</td>
+            <td>Adicionar assert</td>
+            <td><code>assertEquals("Rua Teste, 123", newUser.getAddress());</code></td>
+        </tr>
+        <tr>
+            <td>52</td>
+            <td>Adicionar set</td>
+            <td><code>user.setAddress("Rua Teste, 123");</code></td>
+        </tr>
+        <tr>
+            <td>59</td>
+            <td>Adicionar assert</td>
+            <td><code>assertEquals("Rua Teste, 123", user.getAddress());</code></td>
+        </tr>
+        <tr>
+            <td>106</td>
+            <td>Adicionar set</td>
+            <td><code>user.setAddress("Rua Teste, 123");</code></td>
+        </tr>
+        <tr>
+            <td>108</td>
+            <td>Atualizar expected</td>
+            <td>Incluir <code>address='Rua Teste, 123'</code></td>
+        </tr>
+        <tr>
+            <td>114</td>
+            <td>Atualizar expected</td>
+            <td>Incluir <code>address='null'</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>4. UserServiceTest.java - Testes do Serviço</h3>
+<p class="file-path">src\test\java\com\techmanage\service\UserServiceTest.java</p>
+
+<div class="warning-box">
+    <p><strong>Total de alterações:</strong> Aproximadamente 12 construtores <code>new User(...)</code> precisam ser atualizados</p>
+    <p><strong>Padrão:</strong> Adicionar sexto parâmetro com endereço apropriado</p>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Linha</th>
+            <th>Teste</th>
+            <th>Variável</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>39-40</td><td>setUp</td><td>user</td></tr>
+        <tr><td>43-44</td><td>setUp</td><td>existingUser</td></tr>
+        <tr><td>65-66</td><td>createUser_EmailAlreadyExists</td><td>newUser</td></tr>
+        <tr><td>109-110</td><td>updateUser_Success</td><td>updatedData</td></tr>
+        <tr><td>129-130</td><td>updateUser_UserNotFound</td><td>updatedData</td></tr>
+        <tr><td>159-160</td><td>updateUser_EmailAlreadyExistsForDifferentUser</td><td>otherUser</td></tr>
+        <tr><td>163-164</td><td>updateUser_EmailAlreadyExistsForDifferentUser</td><td>updatedData</td></tr>
+        <tr><td>178-179</td><td>updateUser_SameEmailForSameUser</td><td>updatedData</td></tr>
+        <tr><td>196-197</td><td>createUser_PhoneAlreadyExists</td><td>newUser</td></tr>
+        <tr><td>208-209</td><td>updateUser_PhoneAlreadyExistsForDifferentUser</td><td>otherUser</td></tr>
+        <tr><td>212-213</td><td>updateUser_PhoneAlreadyExistsForDifferentUser</td><td>updatedData</td></tr>
+        <tr><td>227-228</td><td>updateUser_SamePhoneForSameUser</td><td>updatedData</td></tr>
+    </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h3>5. UserControllerIntegrationTest.java - Testes de Integração</h3>
+<p class="file-path">src\test\java\com\techmanage\controller\UserControllerIntegrationTest.java</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Linha</th>
+            <th>Teste</th>
+            <th>Tipo de Alteração</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>51-52</td><td>setUp</td><td>Atualizar construtor testUser</td></tr>
+        <tr><td>66</td><td>createUser_Success</td><td>Adicionar assert JSON</td></tr>
+        <tr><td>71-72</td><td>createUser_InvalidData</td><td>Atualizar construtor</td></tr>
+        <tr><td>87-88</td><td>createUser_DuplicateEmail</td><td>Atualizar construtor</td></tr>
+        <tr><td>140-141</td><td>updateUser_Success</td><td>Atualizar construtor</td></tr>
+        <tr><td>188-189</td><td>updateUser_DuplicateEmail</td><td>Atualizar construtor</td></tr>
+        <tr><td>192-193</td><td>updateUser_DuplicateEmail</td><td>Atualizar construtor</td></tr>
+        <tr><td>219-220</td><td>createUser_DuplicatePhone</td><td>Atualizar construtor</td></tr>
+        <tr><td>238-239</td><td>updateUser_DuplicatePhone</td><td>Atualizar construtor</td></tr>
+        <tr><td>242-243</td><td>updateUser_DuplicatePhone</td><td>Atualizar construtor</td></tr>
+    </tbody>
+</table>
+
+<h3>6. UserRepositoryTest.java - Testes do Repositório</h3>
+<p class="file-path">src\test\java\com\techmanage\repository\UserRepositoryTest.java</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Linha</th>
+            <th>Teste</th>
+            <th>Tipo de Alteração</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>29-30</td><td>setUp</td><td>Atualizar construtor testUser</td></tr>
+        <tr><td>43</td><td>testSaveUser</td><td>Adicionar assert de address</td></tr>
+        <tr><td>67-68</td><td>testFindAll</td><td>Atualizar construtor user2</td></tr>
+        <tr><td>129-130</td><td>testCount</td><td>Atualizar construtor user2</td></tr>
+        <tr><td>146-147</td><td>testDeleteAll</td><td>Atualizar construtor user2</td></tr>
+    </tbody>
+</table>
+
+<h3>7. UserControllerUnitTest.java - Testes Unitários do Controller</h3>
+<p class="file-path">src\test\java\com\techmanage\controller\UserControllerUnitTest.java</p>
+
+<div class="warning-box">
+    <p><strong>Total de alterações:</strong> Aproximadamente 15 construtores precisam ser atualizados</p>
+</div>
+
+<div class="page-break"></div>
+
+<h2>📊 RESUMO QUANTITATIVO DE ALTERAÇÕES</h2>
+
+<h3>Produção</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Arquivo</th>
+            <th>Linhas Alteradas</th>
+            <th>Linhas Adicionadas</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>User.java</td>
+            <td>3</td>
+            <td>10</td>
+            <td>13</td>
+        </tr>
+        <tr>
+            <td>UserServiceImpl.java</td>
+            <td>0</td>
+            <td>1</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td><strong>TOTAL PRODUÇÃO</strong></td>
+            <td><strong>3</strong></td>
+            <td><strong>11</strong></td>
+            <td><strong>14</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Testes</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Arquivo</th>
+            <th>Construtores</th>
+            <th>Asserts</th>
+            <th>Total Alterações</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>UserTest.java</td>
+            <td>2</td>
+            <td>5</td>
+            <td>7</td>
+        </tr>
+        <tr>
+            <td>UserServiceTest.java</td>
+            <td>12</td>
+            <td>0</td>
+            <td>12</td>
+        </tr>
+        <tr>
+            <td>UserControllerIntegrationTest.java</td>
+            <td>9</td>
+            <td>1</td>
+            <td>10</td>
+        </tr>
+        <tr>
+            <td>UserRepositoryTest.java</td>
+            <td>4</td>
+            <td>1</td>
+            <td>5</td>
+        </tr>
+        <tr>
+            <td>UserControllerUnitTest.java</td>
+            <td>15</td>
+            <td>0</td>
+            <td>15</td>
+        </tr>
+        <tr>
+            <td><strong>TOTAL TESTES</strong></td>
+            <td><strong>42</strong></td>
+            <td><strong>7</strong></td>
+            <td><strong>49</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="summary-box">
+    <h3 style="color: #2c3e50; margin-top: 0;">TOTAL GERAL: 63 ALTERAÇÕES</h3>
+    <ul>
+        <li>14 alterações em código de produção</li>
+        <li>49 alterações em código de teste</li>
+        <li>42 construtores <code>new User(...)</code> atualizados</li>
+        <li>7 novos asserts adicionados</li>
+    </ul>
+</div>
+
+<div class="page-break"></div>
+
+<h2>🗄️ MIGRAÇÃO DE BANCO DE DADOS</h2>
+
+<h3>Script SQL Necessário</h3>
+
+<pre><code>-- Migration: Adicionar coluna address na tabela users
+-- Versão: V2__add_address_to_users.sql
+-- Data: 2025-10-07
+
+ALTER TABLE users
+ADD COLUMN address VARCHAR(255);
+
+-- Comentário explicativo
+COMMENT ON COLUMN users.address IS 'Endereço completo do usuário';</code></pre>
+
+<h3>Localização Sugerida (Flyway)</h3>
+<p class="file-path">src/main/resources/db/migration/V2__add_address_to_users.sql</p>
+
+<h3>Comportamento para Dados Existentes</h3>
+<div class="info-box">
+    <ul>
+        <li><strong>Registros existentes:</strong> Campo <code>address</code> será <strong>NULL</strong></li>
+        <li><strong>Novos registros:</strong> Campo <code>address</code> pode ser NULL ou preenchido</li>
+        <li><strong>Recomendação:</strong> Considerar valor padrão ou migração de dados se necessário</li>
+    </ul>
+</div>
+
+<div class="page-break"></div>
+
+<h2>✅ CHECKLIST DE IMPLEMENTAÇÃO</h2>
+
+<h3>Fase 1: Código de Produção (⏱️ 1-2 horas)</h3>
+<ul class="checklist">
+    <li>1.1. Criar branch de desenvolvimento: <code>feature/add-user-address</code></li>
+    <li>1.2. Adicionar campo <code>address</code> em User.java (linha 40+)</li>
+    <li>1.3. Atualizar <code>@JsonPropertyOrder</code> em User.java (linha 11)</li>
+    <li>1.4. Atualizar construtor parametrizado em User.java (linha 45)</li>
+    <li>1.5. Adicionar getter de <code>address</code> em User.java</li>
+    <li>1.6. Adicionar setter de <code>address</code> em User.java</li>
+    <li>1.7. Atualizar método <code>toString()</code> em User.java (linhas 114-123)</li>
+    <li>1.8. Adicionar <code>setAddress</code> no UserServiceImpl.java (linha 60)</li>
+    <li>1.9. Compilar código (<code>mvn clean compile</code>)</li>
+</ul>
+
+<h3>Fase 2: Testes Unitários da Entidade (⏱️ 30 min)</h3>
+<ul class="checklist">
+    <li>2.1. Atualizar UserTest.java - teste do construtor padrão (linha 27)</li>
+    <li>2.2. Atualizar UserTest.java - teste do construtor parametrizado (linhas 33, 40)</li>
+    <li>2.3. Atualizar UserTest.java - teste de setters/getters (linhas 52, 59)</li>
+    <li>2.4. Atualizar UserTest.java - teste toString com valores (linhas 106, 108)</li>
+    <li>2.5. Atualizar UserTest.java - teste toString com null (linha 114)</li>
+    <li>2.6. Executar UserTest: <code>mvn test -Dtest=UserTest</code></li>
+    <li>2.7. Verificar: todos os testes passam ✅</li>
+</ul>
+
+<h3>Fase 3: Testes de Serviço (⏱️ 45 min)</h3>
+<ul class="checklist">
+    <li>3.1. Atualizar UserServiceTest.java - setUp (linhas 39-40, 43-44)</li>
+    <li>3.2. Atualizar todos os construtores User em UserServiceTest.java (~10 ocorrências)</li>
+    <li>3.3. Executar UserServiceTest: <code>mvn test -Dtest=UserServiceTest</code></li>
+    <li>3.4. Verificar: todos os testes passam ✅</li>
+</ul>
+
+<h3>Fase 4: Testes de Repositório (⏱️ 15 min)</h3>
+<ul class="checklist">
+    <li>4.1. Atualizar UserRepositoryTest.java - setUp (linhas 29-30)</li>
+    <li>4.2. Adicionar assert de address (linha 43)</li>
+    <li>4.3. Atualizar construtores restantes (~3 ocorrências)</li>
+    <li>4.4. Executar UserRepositoryTest: <code>mvn test -Dtest=UserRepositoryTest</code></li>
+    <li>4.5. Verificar: todos os testes passam ✅</li>
+</ul>
+
+<h3>Fase 5: Testes de Controller (⏱️ 1 hora)</h3>
+<ul class="checklist">
+    <li>5.1. Atualizar UserControllerIntegrationTest.java - setUp (linhas 51-52)</li>
+    <li>5.2. Adicionar assert JSON de address (linha 66)</li>
+    <li>5.3. Atualizar todos os construtores (~8 ocorrências)</li>
+    <li>5.4. Atualizar UserControllerUnitTest.java - setUp (linhas 37-38)</li>
+    <li>5.5. Atualizar todos os construtores (~14 ocorrências)</li>
+    <li>5.6. Executar testes: <code>mvn test -Dtest=UserController*Test</code></li>
+    <li>5.7. Verificar: todos os testes passam ✅</li>
+</ul>
+
+<h3>Fase 6: Integração Completa (⏱️ 30 min)</h3>
+<ul class="checklist">
+    <li>6.1. Executar todos os testes: <code>mvn test</code></li>
+    <li>6.2. Verificar cobertura de código: <code>mvn jacoco:report</code></li>
+    <li>6.3. Garantir cobertura > 90%</li>
+    <li>6.4. Executar build completo: <code>mvn clean install</code></li>
+    <li>6.5. Verificar: build passa sem erros ✅</li>
+</ul>
+
+<h3>Fase 7: Banco de Dados (⏱️ 15 min)</h3>
+<ul class="checklist">
+    <li>7.1. Criar script de migração SQL</li>
+    <li>7.2. Testar migration em banco local</li>
+    <li>7.3. Validar schema atualizado</li>
+    <li>7.4. Documentar rollback se necessário</li>
+</ul>
+
+<h3>Fase 8: Testes Manuais (⏱️ 30 min)</h3>
+<ul class="checklist">
+    <li>8.1. Iniciar aplicação: <code>mvn spring-boot:run</code></li>
+    <li>8.2. Testar POST /api/users com campo address</li>
+    <li>8.3. Testar GET /api/users (verificar address no JSON)</li>
+    <li>8.4. Testar PUT /api/users/{id} atualizando address</li>
+    <li>8.5. Testar GET /api/users/{id} (verificar address atualizado)</li>
+    <li>8.6. Validar que registros antigos retornam address: null</li>
+</ul>
+
+<h3>Fase 9: Revisão e Documentação (⏱️ 30 min)</h3>
+<ul class="checklist">
+    <li>9.1. Revisar todas as alterações no código</li>
+    <li>9.2. Atualizar README.md se necessário</li>
+    <li>9.3. Atualizar documentação da API (Swagger/OpenAPI)</li>
+    <li>9.4. Revisar commits: mensagens descritivas</li>
+    <li>9.5. Preparar Pull Request</li>
+</ul>
+
+<h3>Fase 10: Code Review e Merge (⏱️ variável)</h3>
+<ul class="checklist">
+    <li>10.1. Criar Pull Request no GitHub/GitLab</li>
+    <li>10.2. Solicitar code review</li>
+    <li>10.3. Ajustar feedback recebido</li>
+    <li>10.4. Merge para branch principal (main/master)</li>
+    <li>10.5. Deploy em ambiente de desenvolvimento</li>
+    <li>10.6. Validação final em DEV</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h2>⚠️ RISCOS E CONSIDERAÇÕES</h2>
+
+<h3>1. Breaking Changes <span class="badge badge-high">ALTO RISCO</span></h3>
+
+<div class="danger-box">
+    <p><strong>Problema:</strong> Alteração na assinatura do construtor User</p>
+    <p><strong>Impacto:</strong> Quebra TODOS os testes existentes (42 construtores)</p>
+    <p><strong>Mitigação:</strong> Manter construtor padrão sem parâmetros funcionando</p>
+</div>
+
+<h3>2. Dados Legados <span class="badge badge-medium">MÉDIO RISCO</span></h3>
+
+<div class="warning-box">
+    <p><strong>Problema:</strong> Usuários existentes no banco terão address = NULL</p>
+    <p><strong>Impacto:</strong> API retornará <code>"address": null</code> para usuários antigos</p>
+    <p><strong>Mitigação:</strong></p>
+    <ul>
+        <li>Aceitar como comportamento normal</li>
+        <li>OU implementar valor padrão ("Não informado")</li>
+        <li>OU criar script de migração de dados</li>
+    </ul>
+</div>
+
+<h3>3. Validações <span class="badge badge-low">BAIXO RISCO</span></h3>
+
+<div class="info-box">
+    <p><strong>Problema:</strong> Campo address não possui validações</p>
+    <p><strong>Impacto:</strong> Usuário pode enviar strings vazias ou muito longas</p>
+    <p><strong>Mitigação (opcional):</strong> Adicionar validações</p>
+</div>
+
+<pre><code>@Size(max = 500, message = "Endereço deve ter no máximo 500 caracteres")
+@Column(name = "address", length = 500)
+private String address;</code></pre>
+
+<h3>4. Performance <span class="badge badge-low">BAIXO RISCO</span></h3>
+
+<div class="info-box">
+    <p><strong>Problema:</strong> Aumento no tamanho dos objetos User em memória</p>
+    <p><strong>Impacto:</strong> Desprezível (um campo String adicional)</p>
+    <p><strong>Mitigação:</strong> Não necessária</p>
+</div>
+
+<h3>5. Compatibilidade de API <span class="badge badge-low">BAIXO RISCO</span></h3>
+
+<div class="info-box">
+    <p><strong>Problema:</strong> Clientes antigos da API não enviarão o campo address</p>
+    <p><strong>Impacto:</strong> Jackson irá deixar address como null (comportamento padrão)</p>
+    <p><strong>Mitigação:</strong> Não necessária (retrocompatível)</p>
+</div>
+
+<div class="page-break"></div>
+
+<h2>📱 EXEMPLOS DE USO DA API</h2>
+
+<h3>POST - Criar usuário COM address</h3>
+
+<h4>Request:</h4>
+<pre><code>POST /api/users HTTP/1.1
+Content-Type: application/json
+
+{
+  "fullName": "João Silva",
+  "email": "joao@email.com",
+  "phone": "+55 11 99999-9999",
+  "birthDate": "1990-05-15",
+  "userType": "ADMIN",
+  "address": "Rua das Flores, 123 - São Paulo/SP"
+}</code></pre>
+
+<h4>Response (201 Created):</h4>
+<pre><code>{
+  "id": 1,
+  "fullName": "João Silva",
+  "email": "joao@email.com",
+  "phone": "+55 11 99999-9999",
+  "birthDate": "1990-05-15",
+  "userType": "ADMIN",
+  "address": "Rua das Flores, 123 - São Paulo/SP"
+}</code></pre>
+
+<h3>POST - Criar usuário SEM address (retrocompatível)</h3>
+
+<h4>Request:</h4>
+<pre><code>POST /api/users HTTP/1.1
+Content-Type: application/json
+
+{
+  "fullName": "Maria Santos",
+  "email": "maria@email.com",
+  "phone": "+55 11 88888-8888",
+  "birthDate": "1985-08-20",
+  "userType": "EDITOR"
+}</code></pre>
+
+<h4>Response (201 Created):</h4>
+<pre><code>{
+  "id": 2,
+  "fullName": "Maria Santos",
+  "email": "maria@email.com",
+  "phone": "+55 11 88888-8888",
+  "birthDate": "1985-08-20",
+  "userType": "EDITOR",
+  "address": null
+}</code></pre>
+
+<h3>GET - Buscar todos os usuários</h3>
+
+<h4>Request:</h4>
+<pre><code>GET /api/users HTTP/1.1</code></pre>
+
+<h4>Response (200 OK):</h4>
+<pre><code>[
+  {
+    "id": 1,
+    "fullName": "João Silva",
+    "email": "joao@email.com",
+    "phone": "+55 11 99999-9999",
+    "birthDate": "1990-05-15",
+    "userType": "ADMIN",
+    "address": "Rua das Flores, 123 - São Paulo/SP"
+  },
+  {
+    "id": 2,
+    "fullName": "Maria Santos",
+    "email": "maria@email.com",
+    "phone": "+55 11 88888-8888",
+    "birthDate": "1985-08-20",
+    "userType": "EDITOR",
+    "address": null
+  }
+]</code></pre>
+
+<h3>PUT - Atualizar usuário incluindo address</h3>
+
+<h4>Request:</h4>
+<pre><code>PUT /api/users/2 HTTP/1.1
+Content-Type: application/json
+
+{
+  "fullName": "Maria Santos Silva",
+  "email": "maria.santos@email.com",
+  "phone": "+55 11 88888-8888",
+  "birthDate": "1985-08-20",
+  "userType": "EDITOR",
+  "address": "Av. Paulista, 1000 - São Paulo/SP"
+}</code></pre>
+
+<h4>Response (200 OK):</h4>
+<pre><code>{
+  "id": 2,
+  "fullName": "Maria Santos Silva",
+  "email": "maria.santos@email.com",
+  "phone": "+55 11 88888-8888",
+  "birthDate": "1985-08-20",
+  "userType": "EDITOR",
+  "address": "Av. Paulista, 1000 - São Paulo/SP"
+}</code></pre>
+
+<div class="page-break"></div>
+
+<h2>📈 MÉTRICAS DE SUCESSO</h2>
+
+<h3>Critérios de Aceitação</h3>
+
+<ul class="checklist">
+    <li>Todos os testes unitários passam (> 90% cobertura)</li>
+    <li>Todos os testes de integração passam</li>
+    <li>Build Maven completa sem erros</li>
+    <li>Campo address aparece no JSON da API</li>
+    <li>POST /api/users aceita campo address</li>
+    <li>PUT /api/users atualiza campo address</li>
+    <li>GET /api/users retorna campo address</li>
+    <li>Registros antigos retornam address: null</li>
+    <li>Registros novos salvam address corretamente</li>
+    <li>Migration de banco executa sem erros</li>
+</ul>
+
+<h3>Métricas Técnicas</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Métrica</th>
+            <th>Valor Esperado</th>
+            <th>Como Medir</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Cobertura de Testes</td>
+            <td>> 90%</td>
+            <td><code>mvn jacoco:report</code></td>
+        </tr>
+        <tr>
+            <td>Tempo de Build</td>
+            <td>< 5 min</td>
+            <td>GitHub Actions / Jenkins</td>
+        </tr>
+        <tr>
+            <td>Tempo de Testes</td>
+            <td>< 2 min</td>
+            <td><code>mvn test</code></td>
+        </tr>
+        <tr>
+            <td>Tamanho do código</td>
+            <td>+63 linhas</td>
+            <td><code>git diff --stat</code></td>
+        </tr>
+        <tr>
+            <td>Classes modificadas</td>
+            <td>7</td>
+            <td>Git changes</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2>📅 CRONOGRAMA SUGERIDO</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Dia</th>
+            <th>Atividade</th>
+            <th>Duração</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>D1</strong></td>
+            <td>Implementação código produção + testes entidade</td>
+            <td>2h</td>
+        </tr>
+        <tr>
+            <td><strong>D1</strong></td>
+            <td>Atualização testes de serviço e repositório</td>
+            <td>1h</td>
+        </tr>
+        <tr>
+            <td><strong>D2</strong></td>
+            <td>Atualização testes de controller</td>
+            <td>1h</td>
+        </tr>
+        <tr>
+            <td><strong>D2</strong></td>
+            <td>Testes manuais e ajustes</td>
+            <td>1h</td>
+        </tr>
+        <tr>
+            <td><strong>D3</strong></td>
+            <td>Code review e ajustes</td>
+            <td>2h</td>
+        </tr>
+        <tr>
+            <td><strong>D3</strong></td>
+            <td>Migration de banco + deploy DEV</td>
+            <td>1h</td>
+        </tr>
+        <tr>
+            <td><strong>D4</strong></td>
+            <td>Validação em DEV</td>
+            <td>2h</td>
+        </tr>
+        <tr>
+            <td><strong>D5</strong></td>
+            <td>Deploy PROD (se aprovado)</td>
+            <td>1h</td>
+        </tr>
+        <tr>
+            <td colspan="2"><strong>TOTAL ESTIMADO</strong></td>
+            <td><strong>11 horas</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2>🎯 CONCLUSÃO</h2>
+
+<div class="summary-box">
+    <p>A adição do campo <code>address</code> na entidade User é uma alteração de <strong>complexidade média</strong> que requer atenção especial aos testes (42 construtores a serem atualizados).</p>
+
+    <h4>Principais pontos de atenção:</h4>
+    <ol>
+        <li>✅ Atualizar construtor parametrizado (quebra compatibilidade de testes)</li>
+        <li>✅ Garantir que UserServiceImpl.updateUser() inclua setAddress()</li>
+        <li>✅ Atualizar TODOS os testes (63 alterações no total)</li>
+        <li>✅ Criar e testar migration de banco de dados</li>
+        <li>✅ Validar comportamento com dados legados (address = null)</li>
+    </ol>
+
+    <p><strong>Recomendação:</strong> Implementar em etapas seguindo o checklist, validando cada fase antes de prosseguir.</p>
+</div>
+
+<hr>
+
+<div class="header-info">
+    <p><strong>Documento gerado em:</strong> 2025-10-07</p>
+    <p><strong>Versão:</strong> 1.0</p>
+    <p><strong>Status:</strong> 📝 Em revisão</p>
+    <p><strong>Próxima revisão:</strong> Após implementação</p>
+</div>
+
+<hr>
+
+<p style="text-align: center; color: #7f8c8d; font-size: 10pt; margin-top: 40px;">
+    <strong>FIM DO DOCUMENTO</strong><br>
+    TechManage - Documentação Técnica<br>
+    © 2025 Equipe de Desenvolvimento
+</p>
+
+</body>
+</html>
