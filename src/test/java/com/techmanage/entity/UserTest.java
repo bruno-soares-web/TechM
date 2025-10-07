@@ -1,11 +1,11 @@
 package com.techmanage.entity;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class UserTest {
 
@@ -25,12 +25,13 @@ class UserTest {
         assertNull(newUser.getPhone());
         assertNull(newUser.getBirthDate());
         assertNull(newUser.getUserType());
+        assertNull(newUser.getAddress());
     }
 
     @Test
     void testParameterizedConstructor() {
         LocalDate birthDate = LocalDate.of(1990, 5, 15);
-        User newUser = new User("João Silva", "joao@email.com", "+5511999999999", birthDate, UserType.ADMIN);
+        User newUser = new User("João Silva", "joao@email.com", "+5511999999999", birthDate, UserType.ADMIN, "Rua Teste, 123");
 
         assertNull(newUser.getId());
         assertEquals("João Silva", newUser.getFullName());
@@ -38,6 +39,7 @@ class UserTest {
         assertEquals("+55 11 99999-9999", newUser.getPhone()); // Formatted phone
         assertEquals(birthDate, newUser.getBirthDate());
         assertEquals(UserType.ADMIN, newUser.getUserType());
+        assertEquals("Rua Teste, 123", newUser.getAddress());
     }
 
     @Test
@@ -50,6 +52,7 @@ class UserTest {
         user.setPhone("+5511999999999");
         user.setBirthDate(birthDate);
         user.setUserType(UserType.ADMIN);
+        user.setAddress("Rua Teste, 123");
 
         assertEquals(1L, user.getId());
         assertEquals("João Silva", user.getFullName());
@@ -57,6 +60,8 @@ class UserTest {
         assertEquals("+55 11 99999-9999", user.getPhone()); // Auto-formatted
         assertEquals(birthDate, user.getBirthDate());
         assertEquals(UserType.ADMIN, user.getUserType());
+        assertEquals("Rua Teste, 123", user.getAddress());
+
     }
 
     @Test
@@ -104,14 +109,17 @@ class UserTest {
         user.setPhone("+5511999999999");
         user.setBirthDate(birthDate);
         user.setUserType(UserType.ADMIN);
+        user.setAddress("Rua Teste, 123");
 
-        String expected = "User{id=1, fullName='João Silva', email='joao@email.com', phone='+5511999999999', birthDate=1990-05-15, userType=ADMIN}";
+
+        String expected = "User{id=1, fullName='João Silva', email='joao@email.com', phone='+5511999999999', birthDate=1990-05-15, userType=ADMIN, address='Rua Teste, 123'}";
         assertEquals(expected, user.toString());
+
     }
 
     @Test
     void testToStringWithNullValues() {
-        String expected = "User{id=null, fullName='null', email='null', phone='null', birthDate=null, userType=null}";
+        String expected = "User{id=null, fullName='null', email='null', phone='null', birthDate=null, userType=null, address='null'}";
         assertEquals(expected, user.toString());
     }
 
