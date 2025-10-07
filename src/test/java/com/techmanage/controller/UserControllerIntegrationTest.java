@@ -1,27 +1,34 @@
 package com.techmanage.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.techmanage.entity.User;
-import com.techmanage.entity.UserType;
-import com.techmanage.repository.UserRepository;
+import java.time.LocalDate;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
-import java.time.LocalDate;
-
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.techmanage.entity.User;
+import com.techmanage.entity.UserType;
+import com.techmanage.repository.UserRepository;
 
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 @ActiveProfiles("test")
@@ -49,7 +56,7 @@ class UserControllerIntegrationTest {
         userRepository.deleteAll();
 
         testUser = new User("João Silva", "joao@email.com", "+5511999999999",
-                           LocalDate.of(1990, 5, 15), UserType.ADMIN);
+                           LocalDate.of(1990, 5, 15), UserType.ADMIN, "Rua Teste, 123");
     }
 
     @Test
@@ -63,13 +70,15 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.fullName", is("João Silva")))
                 .andExpect(jsonPath("$.email", is("joao@email.com")))
                 .andExpect(jsonPath("$.userType", is("ADMIN")))
-                .andExpect(jsonPath("$.id", notNullValue()));
+                .andExpect(jsonPath("$.id", notNullValue()))
+                .andExpect(jsonPath("$.address", is("Rua Teste, 123")));
+
     }
 
     @Test
     void createUser_InvalidData() throws Exception {
         User invalidUser = new User("", "email-invalido", "telefone-invalido",
-                                   LocalDate.now().plusDays(1), null);
+                                   LocalDate.now().plusDays(1), null, "Rua Teste, 123");
 
         String userJson = objectMapper.writeValueAsString(invalidUser);
 
@@ -85,7 +94,7 @@ class UserControllerIntegrationTest {
         userRepository.save(testUser);
 
         User duplicateUser = new User("Maria Santos", "joao@email.com", "+5511888888888",
-                                     LocalDate.of(1985, 8, 20), UserType.EDITOR);
+                                     LocalDate.of(1985, 8, 20), UserType.EDITOR, "Rua Teste, 123");
 
         String userJson = objectMapper.writeValueAsString(duplicateUser);
 
@@ -138,7 +147,7 @@ class UserControllerIntegrationTest {
         User savedUser = userRepository.save(testUser);
 
         User updatedUser = new User("João Santos", "joao.santos@email.com", "+5511888888888",
-                                   LocalDate.of(1990, 5, 15), UserType.EDITOR);
+                                   LocalDate.of(1990, 5, 15), UserType.EDITOR, "Rua Teste, 123");
 
         String userJson = objectMapper.writeValueAsString(updatedUser);
 
@@ -171,7 +180,7 @@ class UserControllerIntegrationTest {
         User savedUser = userRepository.save(testUser);
 
         User invalidUser = new User("", "email-invalido", "telefone-invalido",
-                                   LocalDate.now().plusDays(1), null);
+                                   LocalDate.now().plusDays(1), null, "Rua Teste, 123");
 
         String userJson = objectMapper.writeValueAsString(invalidUser);
 
@@ -186,11 +195,11 @@ class UserControllerIntegrationTest {
     void updateUser_DuplicateEmail() throws Exception {
         User savedUser1 = userRepository.save(testUser);
         User otherUser = new User("Maria Santos", "maria@email.com", "+5511888888888",
-                                 LocalDate.of(1985, 8, 20), UserType.EDITOR);
+                                 LocalDate.of(1985, 8, 20), UserType.EDITOR, "Rua Teste, 123");
         userRepository.save(otherUser);
 
         User updatedUser = new User("João Santos", "maria@email.com", "+5511777777777",
-                                   LocalDate.of(1990, 5, 15), UserType.VIEWER);
+                                   LocalDate.of(1990, 5, 15), UserType.VIEWER, "Rua Teste, 123");
 
         String userJson = objectMapper.writeValueAsString(updatedUser);
 
@@ -217,7 +226,7 @@ class UserControllerIntegrationTest {
         userRepository.save(testUser);
 
         User duplicatePhoneUser = new User("Maria Santos", "maria@email.com", "+5511999999999",
-                                          LocalDate.of(1985, 8, 20), UserType.EDITOR);
+                                          LocalDate.of(1985, 8, 20), UserType.EDITOR, "Rua Teste, 123");
 
         String userJson = objectMapper.writeValueAsString(duplicatePhoneUser);
 
@@ -236,11 +245,11 @@ class UserControllerIntegrationTest {
     void updateUser_DuplicatePhone() throws Exception {
         User savedUser1 = userRepository.save(testUser);
         User otherUser = new User("Maria Santos", "maria@email.com", "+5511888888888",
-                                 LocalDate.of(1985, 8, 20), UserType.EDITOR);
+                                 LocalDate.of(1985, 8, 20), UserType.EDITOR, "Rua Teste, 123");
         userRepository.save(otherUser);
 
         User updatedUser = new User("João Santos", "joao.santos@email.com", "+5511888888888",
-                                   LocalDate.of(1990, 5, 15), UserType.VIEWER);
+                                   LocalDate.of(1990, 5, 15), UserType.VIEWER, "Rua Teste, 123");
 
         String userJson = objectMapper.writeValueAsString(updatedUser);
 

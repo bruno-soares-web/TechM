@@ -1,25 +1,32 @@
 package com.techmanage.controller;
 
-import com.techmanage.entity.User;
-import com.techmanage.entity.UserType;
-import com.techmanage.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import com.techmanage.entity.User;
+import com.techmanage.entity.UserType;
+import com.techmanage.service.UserService;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerUnitTest {
@@ -35,7 +42,7 @@ class UserControllerUnitTest {
     @BeforeEach
     void setUp() {
         testUser = new User("João Silva", "joao@email.com", "+5511999999999",
-                          LocalDate.of(1990, 5, 15), UserType.ADMIN);
+                          LocalDate.of(1990, 5, 15), UserType.ADMIN, "Rua Teste, 123");
         testUser.setId(1L);
     }
 
@@ -43,7 +50,7 @@ class UserControllerUnitTest {
     void createUser_shouldReturnCreated() {
         // Given
         User inputUser = new User("João Silva", "joao@email.com", "+5511999999999",
-                                LocalDate.of(1990, 5, 15), UserType.ADMIN);
+                                LocalDate.of(1990, 5, 15), UserType.ADMIN, "Rua Teste, 123");
         when(userService.createUser(any(User.class))).thenReturn(testUser);
 
         // When
@@ -72,7 +79,7 @@ class UserControllerUnitTest {
     void getAllUsers_shouldReturnOkWithUsers() {
         // Given
         User user2 = new User("Maria Santos", "maria@email.com", "+5511888888888",
-                             LocalDate.of(1985, 8, 20), UserType.EDITOR);
+                             LocalDate.of(1985, 8, 20), UserType.EDITOR, "Rua Teste, 123");
         user2.setId(2L);
         List<User> users = Arrays.asList(testUser, user2);
         when(userService.getAllUsers()).thenReturn(users);
@@ -152,9 +159,9 @@ class UserControllerUnitTest {
         // Given
         Long userId = 1L;
         User updateData = new User("João Santos", "joao.santos@email.com", "+5511999999999",
-                                 LocalDate.of(1990, 5, 15), UserType.EDITOR);
+                                 LocalDate.of(1990, 5, 15), UserType.EDITOR, "Rua Teste, 123");
         User updatedUser = new User("João Santos", "joao.santos@email.com", "+5511999999999",
-                                  LocalDate.of(1990, 5, 15), UserType.EDITOR);
+                                  LocalDate.of(1990, 5, 15), UserType.EDITOR,  "Rua Teste, 123");
         updatedUser.setId(userId);
 
         when(userService.updateUser(eq(userId), any(User.class))).thenReturn(updatedUser);
@@ -176,7 +183,7 @@ class UserControllerUnitTest {
         // Given
         Long userId = null;
         User updateData = new User("João Santos", "joao.santos@email.com", "+5511999999999",
-                                 LocalDate.of(1990, 5, 15), UserType.EDITOR);
+                                 LocalDate.of(1990, 5, 15), UserType.EDITOR, "Rua Teste, 123");
 
         // When
         ResponseEntity<User> response = userController.updateUser(userId, updateData);
@@ -253,7 +260,7 @@ class UserControllerUnitTest {
     void createUser_withDifferentUserTypes_shouldWork() {
         // Test with ADMIN
         User adminUser = new User("Admin User", "admin@email.com", "+5511111111111",
-                                LocalDate.of(1980, 1, 1), UserType.ADMIN);
+                                LocalDate.of(1980, 1, 1), UserType.ADMIN, "Rua Teste, 123");
         when(userService.createUser(any(User.class))).thenReturn(adminUser);
 
         ResponseEntity<User> adminResponse = userController.createUser(adminUser);
@@ -261,7 +268,7 @@ class UserControllerUnitTest {
 
         // Test with EDITOR
         User editorUser = new User("Editor User", "editor@email.com", "+5511222222222",
-                                 LocalDate.of(1985, 6, 15), UserType.EDITOR);
+                                 LocalDate.of(1985, 6, 15), UserType.EDITOR, "Rua Teste, 123");
         when(userService.createUser(any(User.class))).thenReturn(editorUser);
 
         ResponseEntity<User> editorResponse = userController.createUser(editorUser);
@@ -269,7 +276,7 @@ class UserControllerUnitTest {
 
         // Test with VIEWER
         User viewerUser = new User("Viewer User", "viewer@email.com", "+5511333333333",
-                                 LocalDate.of(1990, 12, 31), UserType.VIEWER);
+                                 LocalDate.of(1990, 12, 31), UserType.VIEWER, "Rua Teste, 123");
         when(userService.createUser(any(User.class))).thenReturn(viewerUser);
 
         ResponseEntity<User> viewerResponse = userController.createUser(viewerUser);
@@ -285,7 +292,7 @@ class UserControllerUnitTest {
 
         // Test update to ADMIN
         User adminUpdate = new User("Updated Admin", "admin@email.com", "+5511111111111",
-                                  LocalDate.of(1980, 1, 1), UserType.ADMIN);
+                                  LocalDate.of(1980, 1, 1), UserType.ADMIN, "Rua Teste, 123");
         adminUpdate.setId(userId);
         when(userService.updateUser(eq(userId), any(User.class))).thenReturn(adminUpdate);
 
@@ -295,7 +302,7 @@ class UserControllerUnitTest {
 
         // Test update to EDITOR
         User editorUpdate = new User("Updated Editor", "editor@email.com", "+5511222222222",
-                                   LocalDate.of(1985, 6, 15), UserType.EDITOR);
+                                   LocalDate.of(1985, 6, 15), UserType.EDITOR, "Rua Teste, 123");
         editorUpdate.setId(userId);
         when(userService.updateUser(eq(userId), any(User.class))).thenReturn(editorUpdate);
 
@@ -310,15 +317,15 @@ class UserControllerUnitTest {
     void getAllUsers_withMultipleUsersOfDifferentTypes_shouldReturnAll() {
         // Given
         User admin = new User("Admin", "admin@email.com", "+5511111111111",
-                            LocalDate.of(1980, 1, 1), UserType.ADMIN);
+                            LocalDate.of(1980, 1, 1), UserType.ADMIN, "Rua Teste, 123");
         admin.setId(1L);
 
         User editor = new User("Editor", "editor@email.com", "+5511222222222",
-                             LocalDate.of(1985, 6, 15), UserType.EDITOR);
+                             LocalDate.of(1985, 6, 15), UserType.EDITOR, "Rua Teste, 123");
         editor.setId(2L);
 
         User viewer = new User("Viewer", "viewer@email.com", "+5511333333333",
-                             LocalDate.of(1990, 12, 31), UserType.VIEWER);
+                             LocalDate.of(1990, 12, 31), UserType.VIEWER, "Rua Teste, 123");
         viewer.setId(3L);
 
         List<User> users = Arrays.asList(admin, editor, viewer);
