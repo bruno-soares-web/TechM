@@ -1,26 +1,31 @@
 package com.techmanage.service;
 
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.techmanage.entity.User;
 import com.techmanage.entity.UserType;
 import com.techmanage.exception.EmailAlreadyExistsException;
 import com.techmanage.exception.PhoneAlreadyExistsException;
 import com.techmanage.exception.UserNotFoundException;
 import com.techmanage.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -37,11 +42,11 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         user = new User("João Silva", "joao@email.com", "+5511999999999",
-                       LocalDate.of(1990, 5, 15), UserType.ADMIN);
+                       LocalDate.of(1990, 5, 15), UserType.ADMIN, "Rua Teste, 123");
         user.setId(1L);
 
         existingUser = new User("Maria Santos", "maria@email.com", "+5511888888888",
-                               LocalDate.of(1985, 8, 20), UserType.EDITOR);
+                               LocalDate.of(1985, 8, 20), UserType.EDITOR, "Rua Teste, 123");
         existingUser.setId(2L);
     }
 
@@ -63,7 +68,7 @@ class UserServiceTest {
         when(userRepository.findAll()).thenReturn(Arrays.asList(existingUser));
 
         User newUser = new User("Outro Nome", "maria@email.com", "+5511777777777",
-                               LocalDate.of(1995, 3, 10), UserType.VIEWER);
+                               LocalDate.of(1995, 3, 10), UserType.VIEWER, "Rua Teste, 123");
 
         assertThrows(EmailAlreadyExistsException.class, () -> {
             userService.createUser(newUser);
@@ -107,7 +112,7 @@ class UserServiceTest {
     @Test
     void updateUser_Success() {
         User updatedData = new User("João Santos", "joao.santos@email.com", "+5511999999999",
-                                   LocalDate.of(1990, 5, 15), UserType.VIEWER);
+                                   LocalDate.of(1990, 5, 15), UserType.VIEWER, "Rua Teste, 123");
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.findAll()).thenReturn(Arrays.asList(user));
@@ -127,7 +132,7 @@ class UserServiceTest {
         when(userRepository.findById(999L)).thenReturn(Optional.empty());
 
         User updatedData = new User("Nome", "email@test.com", "+5511999999999",
-                                   LocalDate.of(1990, 5, 15), UserType.ADMIN);
+                                   LocalDate.of(1990, 5, 15), UserType.ADMIN, "Rua Teste, 123");
 
         assertThrows(UserNotFoundException.class, () -> {
             userService.updateUser(999L, updatedData);
@@ -157,11 +162,11 @@ class UserServiceTest {
     @Test
     void updateUser_EmailAlreadyExistsForDifferentUser() {
         User otherUser = new User("Pedro Silva", "pedro@email.com", "+5511777777777",
-                                 LocalDate.of(1988, 2, 10), UserType.EDITOR);
+                                 LocalDate.of(1988, 2, 10), UserType.EDITOR, "Rua Teste, 123");
         otherUser.setId(3L);
 
         User updatedData = new User("João Santos", "pedro@email.com", "+5511999999999",
-                                   LocalDate.of(1990, 5, 15), UserType.VIEWER);
+                                   LocalDate.of(1990, 5, 15), UserType.VIEWER, "Rua Teste, 123");
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.findAll()).thenReturn(Arrays.asList(user, otherUser));
@@ -176,7 +181,7 @@ class UserServiceTest {
     @Test
     void updateUser_SameEmailForSameUser() {
         User updatedData = new User("João Santos", "joao@email.com", "+5511888888888",
-                                   LocalDate.of(1990, 5, 15), UserType.VIEWER);
+                                   LocalDate.of(1990, 5, 15), UserType.VIEWER, "Rua Teste, 123");
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.findAll()).thenReturn(Arrays.asList(user));
@@ -194,7 +199,7 @@ class UserServiceTest {
         when(userRepository.findAll()).thenReturn(Arrays.asList(existingUser));
 
         User newUser = new User("Outro Nome", "novo@email.com", "+5511888888888",
-                               LocalDate.of(1995, 3, 10), UserType.VIEWER);
+                               LocalDate.of(1995, 3, 10), UserType.VIEWER,"Rua Teste, 123");
 
         assertThrows(PhoneAlreadyExistsException.class, () -> {
             userService.createUser(newUser);
@@ -206,11 +211,11 @@ class UserServiceTest {
     @Test
     void updateUser_PhoneAlreadyExistsForDifferentUser() {
         User otherUser = new User("Pedro Silva", "pedro@email.com", "+5511777777777",
-                                 LocalDate.of(1988, 2, 10), UserType.EDITOR);
+                                 LocalDate.of(1988, 2, 10), UserType.EDITOR, "Rua Teste, 123");
         otherUser.setId(3L);
 
         User updatedData = new User("João Santos", "joao.santos@email.com", "+5511777777777",
-                                   LocalDate.of(1990, 5, 15), UserType.VIEWER);
+                                   LocalDate.of(1990, 5, 15), UserType.VIEWER, "Rua Teste, 123");
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.findAll()).thenReturn(Arrays.asList(user, otherUser));
@@ -225,7 +230,7 @@ class UserServiceTest {
     @Test
     void updateUser_SamePhoneForSameUser() {
         User updatedData = new User("João Santos", "joao.santos@email.com", "+5511999999999",
-                                   LocalDate.of(1990, 5, 15), UserType.VIEWER);
+                                   LocalDate.of(1990, 5, 15), UserType.VIEWER, "Rua Teste, 123");
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.findAll()).thenReturn(Arrays.asList(user));
