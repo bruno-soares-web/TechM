@@ -1,14 +1,27 @@
 package com.techmanage.entity;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import java.time.LocalDate;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
+
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
-@JsonPropertyOrder({"id", "fullName", "email", "phone", "birthDate", "userType"})
+@JsonPropertyOrder({"id", "fullName", "email", "phone", "birthDate", "userType", "address"})
 public class User {
 
     @Id
@@ -23,6 +36,9 @@ public class User {
     @NotBlank(message = "Email é obrigatório")
     @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(name = "address")
+    private String address;
 
     @NotBlank(message = "Telefone é obrigatório")
     @Pattern(regexp = "^\\+\\d{1,3}\\s\\d{2}\\s\\d{4,5}-\\d{4}$", message = "Telefone deve estar no formato internacional (ex: +55 11 99999-9999)")
@@ -42,13 +58,14 @@ public class User {
     public User() {
     }
 
-    public User(String fullName, String email, String phone, LocalDate birthDate, UserType userType) {
-        this.fullName = fullName;
-        this.email = email;
-        this.phone = phone;
-        this.birthDate = birthDate;
-        this.userType = userType;
-    }
+public User(String fullName, String email, String phone, LocalDate birthDate, UserType userType, String address) {
+    this.fullName = fullName;
+    this.email = email;
+    this.phone = phone;
+    this.birthDate = birthDate;
+    this.userType = userType;
+    this.address = address;
+}
 
     public Long getId() {
         return id;
@@ -72,6 +89,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getAddress() {
+    return address;
+    }
+
+    public void setAddress(String address) {
+    this.address = address;
     }
 
     @JsonGetter("phone")
@@ -111,14 +136,15 @@ public class User {
     }
 
     @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", fullName='" + fullName + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", birthDate=" + birthDate +
-                ", userType=" + userType +
-                '}';
-    }
+public String toString() {
+    return "User{" +
+            "id=" + id +
+            ", fullName='" + fullName + '\'' +
+            ", email='" + email + '\'' +
+            ", phone='" + phone + '\'' +
+            ", birthDate=" + birthDate +
+            ", userType=" + userType +
+            ", address='" + address + '\'' +
+            '}';
+}
 }
