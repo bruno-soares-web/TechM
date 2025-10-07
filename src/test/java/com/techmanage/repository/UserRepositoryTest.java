@@ -1,18 +1,21 @@
 package com.techmanage.repository;
 
-import com.techmanage.entity.User;
-import com.techmanage.entity.UserType;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
+import com.techmanage.entity.User;
+import com.techmanage.entity.UserType;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -27,7 +30,7 @@ class UserRepositoryTest {
     void setUp() {
         userRepository.deleteAll();
         testUser = new User("João Silva", "joao@email.com", "+5511999999999",
-                          LocalDate.of(1990, 5, 15), UserType.ADMIN);
+                          LocalDate.of(1990, 5, 15), UserType.ADMIN, "Rua Teste, 123");
     }
 
     @Test
@@ -41,6 +44,7 @@ class UserRepositoryTest {
         assertEquals("+5511999999999", savedUser.getPhone());
         assertEquals(LocalDate.of(1990, 5, 15), savedUser.getBirthDate());
         assertEquals(UserType.ADMIN, savedUser.getUserType());
+        assertEquals("Rua Teste, 123", savedUser.getAddress());
     }
 
     @Test
@@ -65,7 +69,7 @@ class UserRepositoryTest {
     void testFindAll() {
         User user1 = userRepository.save(testUser);
         User user2 = new User("Maria Santos", "maria@email.com", "+5511888888888",
-                             LocalDate.of(1985, 8, 20), UserType.EDITOR);
+                             LocalDate.of(1985, 8, 20), UserType.EDITOR, "Rua Teste, 123");
         userRepository.save(user2);
 
         List<User> users = userRepository.findAll();
@@ -127,7 +131,7 @@ class UserRepositoryTest {
         assertEquals(1, userRepository.count());
 
         User user2 = new User("Maria Santos", "maria@email.com", "+5511888888888",
-                             LocalDate.of(1985, 8, 20), UserType.EDITOR);
+                             LocalDate.of(1985, 8, 20), UserType.EDITOR, "Rua Teste, 123");
         userRepository.save(user2);
         assertEquals(2, userRepository.count());
     }
@@ -144,7 +148,7 @@ class UserRepositoryTest {
     void testDeleteAll() {
         userRepository.save(testUser);
         User user2 = new User("Maria Santos", "maria@email.com", "+5511888888888",
-                             LocalDate.of(1985, 8, 20), UserType.EDITOR);
+                             LocalDate.of(1985, 8, 20), UserType.EDITOR, "Rua Teste, 123");
         userRepository.save(user2);
 
         assertEquals(2, userRepository.count());
