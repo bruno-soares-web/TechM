@@ -14,7 +14,7 @@
     <name>techmanage-api</name>
     <description>API para gerenciamento de usuários - TechManage</description>
     <properties>
-        <java.version>8</java.version>
+        <java.version>17</java.version>
     </properties>
     <dependencies>
         <dependency>

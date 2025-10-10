@@ -13,7 +13,14 @@
       "Bash(dir:*)",
       "Bash(set JAVA_HOME=C:Program FilesJavajdk1.8.0_202)",
       "Bash(timeout:*)",
-      "Bash(if exist nul del nul)"
+      "Bash(if exist nul del nul)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(mkdir:*)",
+      "Read(//c/Users/000491631/Documents/**)",
+      "Bash(powershell.exe:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []

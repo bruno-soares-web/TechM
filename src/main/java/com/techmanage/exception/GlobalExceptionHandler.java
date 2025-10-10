@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> response = new HashMap<>();
         Map<String, String> fieldErrors = new LinkedHashMap<>();
 
-        fieldErrors.put("email", "Email já está em uso");
+        fieldErrors.put("email", "Este email já está cadastrado no sistema. Por favor, utilize outro email.");
 
         response.put("fieldErrors", fieldErrors);
         response.put("timestamp", LocalDateTime.now().toString());
@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> response = new HashMap<>();
         Map<String, String> fieldErrors = new LinkedHashMap<>();
 
-        fieldErrors.put("phone", "Telefone já está em uso");
+        fieldErrors.put("phone", "Este telefone já está cadastrado no sistema. Por favor, utilize outro telefone.");
 
         response.put("fieldErrors", fieldErrors);
         response.put("timestamp", LocalDateTime.now().toString());
